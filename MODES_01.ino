@@ -12,7 +12,8 @@ boolean BUTTON_FLAG               = 0;                              //флаг �
 SimpleTimer timer;
 Bounce debouncer = Bounce();
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -22,44 +23,53 @@ void setup() {
   debouncer.attach(BUTTON_PIN);                                    //настройка Bouncer на пин кнопки
   debouncer.interval(5);                                           //интервал дребезга
 
-  timer.setInterval(50L, Check_BUTTON);                            //слушаем кнопку каждые N миллисекнуд
+  timer.setInterval(50L, CHECK_BUTTON);                            //слушаем кнопку каждые N миллисекнуд
   timer.setInterval(1000L, RUN_MODE);                              //запуск текщего режима каждые N миллисекнуд
 }
 
-void loop() {
+void loop()
+{
   timer.run();                                                     //таймер
 }
 
-void RUN_MODE() {
+void RUN_MODE()
+{
   switch (CURRENT_MODE) {
     case 0: MODE_0(); break;
     case 1: MODE_1(); break;
   }
 }
 
-void MODE_0() {
+void MODE_0()
+{
   Serial.print("MODE: ");
   Serial.println(CURRENT_MODE);
 }
 
-void MODE_1() {
+void MODE_1()
+{
   Serial.print("MODE: ");
   Serial.println(CURRENT_MODE);
 }
 
-void Check_BUTTON() {
+void CHECK_BUTTON()
+{
   boolean changed = debouncer.update();
   if (changed) {
-    int value = debouncer.read();
-    if (value == LOW && BUTTON_FLAG == 0) {                        //замкнуто (жмут кнопку!)
+    int VALUE = debouncer.read();
+    if (VALUE == LOW && BUTTON_FLAG == 0)                          //замкнуто (жмут кнопку!)
+    {
       CURRENT_MODE++;                                              //следущий режим
       BUTTON_FLAG = 1;                                             //флаг, что кнопка НАжата
-      if (CURRENT_MODE > MODES - 1) {                              //когда режимы "закончились",
+      if (CURRENT_MODE > MODES - 1)                                //когда режимы "закончились",
+      {
         CURRENT_MODE = 0;                                          //то сброс счётчика режимов на начало
       }
       Serial.println("Button pressed!");
+      RUN_MODE();
     }
-    if (value == HIGH && BUTTON_FLAG == 1) {                       //разомкнуто и флаг говорит, что до этого кнопка "жалась"
+    if (VALUE == HIGH && BUTTON_FLAG == 1)                         //разомкнуто и флаг говорит, что до этого кнопка "жалась"
+    {
       BUTTON_FLAG = 0;                                             //ставим флаг, что кнопка ОТжата
     }
   }
